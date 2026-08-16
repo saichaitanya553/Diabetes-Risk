@@ -1,5 +1,4 @@
-import React from "react";
-import { Link } from "react-router-dom";
+
 function Home() {
   return (
     <div className="home-page">
@@ -26,13 +25,13 @@ function Home() {
 
           <div className="hero-actions">
 
-            <Link
-              to="/predict"
+            <a
+              href="/predict"
               className="btn btn-primary hero-btn"
             >
               Start Prediction
               <span className="arrow">→</span>
-            </Link>
+            </a>
 
             <a
               href="#how-it-works"
@@ -247,12 +246,12 @@ function Home() {
 
         </div>
 
-        <Link
-          to="/predict"
+        <a
+          href="/predict"
           className="btn btn-primary"
         >
           Start Assessment →
-        </Link>
+        </a>
 
       </section>
 

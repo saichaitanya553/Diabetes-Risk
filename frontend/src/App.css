@@ -622,6 +622,25 @@ a {
   grid-column: 1 / -1;
 }
 
+.form-section-divider {
+  display: flex;
+  align-items: center;
+  margin: 4px 0 -4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.form-section-divider::before {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  margin-right: 10px;
+}
+
 
 /* FORM ACTIONS */
 
@@ -670,6 +689,43 @@ a {
   letter-spacing: 1.3px;
 
   text-transform: uppercase;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.download-report-btn {
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+  background: white;
+  border: 1px solid var(--primary);
+  border-radius: 20px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.download-report-btn:hover:not(:disabled) {
+  background: var(--primary);
+  color: white;
+}
+
+.download-report-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.download-error {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #c0392b;
+  font-weight: 600;
 }
 
 
@@ -1162,19 +1218,6 @@ a {
   font-size: 13px;
 
   line-height: 1.55;
-}
-
-
-/* =========================================================
-   HIDE OLD BACKEND RECOMMENDATIONS
-   ========================================================= */
-
-.backend-recommendations {
-  display: none !important;
-}
-
-.recommendation-card {
-  display: none !important;
 }
 
 
@@ -2683,6 +2726,81 @@ a {
   min-width: 5px;
 
   transition: width 0.6s ease;
+}
+
+/* DIRECTION-AWARE FILL + LABEL COLORS */
+
+.prediction-feature-fill.fill-up {
+  background: #c0392b;
+}
+
+.prediction-feature-fill.fill-down {
+  background: #146c5a;
+}
+
+.prediction-feature-header strong.impact-up {
+  color: #c0392b;
+}
+
+.prediction-feature-header strong.impact-down {
+  color: #146c5a;
+}
+
+.prediction-feature-value {
+  color: #687b76;
+  font-weight: 500;
+}
+
+
+/* CLINICAL RANGE FLAGS */
+
+.range-flag {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.range-flag-normal {
+  background: #e5f3ee;
+  color: #146c5a;
+}
+
+.range-flag-elevated {
+  background: #fdf1dc;
+  color: #a9660b;
+}
+
+.range-flag-high {
+  background: #fbe6e3;
+  color: #c0392b;
+}
+
+
+/* OFFLINE ESTIMATE BADGE */
+
+.offline-badge {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #fdf1dc;
+  color: #8a5a08;
+  border: 1px solid #f0d9ab;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+
+/* CROSS-VALIDATION NOTE ON ABOUT PAGE */
+
+.performance-cv-note {
+  margin-top: 16px;
+  font-size: 12px;
+  color: #687b76;
+  line-height: 1.6;
 }
 
 

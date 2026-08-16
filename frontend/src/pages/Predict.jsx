@@ -1,7 +1,9 @@
 import { useState } from "react";
 import PatientForm from "../components/PatientForm";
 import PredictionResult from "../components/PredictionResult";
+import RecommendationList from "../components/RecommendationList";
 import { predictDiabetesRisk } from "../services/api";
+import { getLifestyleGuidance } from "../utils/lifestyleGuidance";
 
 function Predict() {
   const [result, setResult] = useState(null);
@@ -53,61 +55,7 @@ function Predict() {
     result?.riskLevel ??
     "moderate-risk";
 
-  const normalizedLevel = riskLevel
-    .toLowerCase()
-    .replace(/\s+/g, "-");
-
-  const lifestyleGuidance = {
-    "low-risk": {
-      dos: [
-        "Stay physically active on a regular basis.",
-        "Choose balanced meals with vegetables, whole grains, and fiber-rich foods.",
-        "Maintain a healthy body weight.",
-        "Keep up with routine health check-ups."
-      ],
-      donts: [
-        "Avoid excessive sugary drinks and highly processed foods.",
-        "Do not ignore long-term changes in your health.",
-        "Do not treat this prediction as a medical diagnosis."
-      ]
-    },
-
-    "moderate-risk": {
-      dos: [
-        "Aim for regular physical activity such as walking or moderate exercise.",
-        "Choose vegetables, whole grains, and fiber-rich foods.",
-        "Limit sugary drinks and highly processed foods.",
-        "Maintain a healthy and sustainable weight.",
-        "Consider discussing your risk with a healthcare professional."
-      ],
-      donts: [
-        "Avoid frequent sugary beverages and excessive added sugar.",
-        "Do not ignore persistent abnormal health readings.",
-        "Do not start or stop medication based only on this prediction.",
-        "Do not consider this result a confirmed diagnosis."
-      ]
-    },
-
-    "high-risk": {
-      dos: [
-        "Consider appropriate medical follow-up and diabetes testing.",
-        "Stay physically active according to your abilities.",
-        "Choose balanced meals and reduce highly processed foods.",
-        "Monitor your health measurements regularly.",
-        "Discuss sustainable lifestyle changes with a healthcare professional."
-      ],
-      donts: [
-        "Do not self-diagnose based only on this application.",
-        "Do not start or stop medication without medical advice.",
-        "Do not ignore abnormal glucose or other health measurements.",
-        "Do not rely on this prediction instead of professional evaluation."
-      ]
-    }
-  };
-
-  const guidance =
-    lifestyleGuidance[normalizedLevel] ||
-    lifestyleGuidance["moderate-risk"];
+  const guidance = getLifestyleGuidance(riskLevel);
 
   return (
     <div className="predict-page">
@@ -277,89 +225,10 @@ function Predict() {
       )}
 
 
-      {/* RECOMMENDATIONS */}
+      {/* RECOMMENDATIONS (dynamic, from the model's response) */}
 
       {result && (
-        <section className="recommendations-section">
-
-          <div className="section-label">
-            NEXT STEPS
-          </div>
-
-          <h2>
-            Recommendations
-          </h2>
-
-          <div className="recommendations-grid">
-
-            <div className="recommendation-item">
-
-              <div className="recommendation-icon">
-                🏃
-              </div>
-
-              <div>
-
-                <h3>
-                  Regular Exercise
-                </h3>
-
-                <p>
-                  Aim for regular moderate physical activity
-                  most days of the week.
-                </p>
-
-              </div>
-
-            </div>
-
-
-            <div className="recommendation-item">
-
-              <div className="recommendation-icon">
-                🥗
-              </div>
-
-              <div>
-
-                <h3>
-                  Healthy Eating
-                </h3>
-
-                <p>
-                  Choose balanced meals with vegetables,
-                  whole grains and lean proteins.
-                </p>
-
-              </div>
-
-            </div>
-
-
-            <div className="recommendation-item">
-
-              <div className="recommendation-icon">
-                🩺
-              </div>
-
-              <div>
-
-                <h3>
-                  Routine Check-ups
-                </h3>
-
-                <p>
-                  Regular health check-ups can support early
-                  detection and prevention.
-                </p>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </section>
+        <RecommendationList recommendations={result.recommendations} />
       )}
 
 

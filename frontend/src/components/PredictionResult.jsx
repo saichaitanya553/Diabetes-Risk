@@ -1,4 +1,9 @@
+import { useState } from "react";
+
 function PredictionResult({ result }) {
+
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState("");
 
   if (!result) {
     return (
@@ -20,6 +25,32 @@ function PredictionResult({ result }) {
       </div>
     );
   }
+
+
+  /* =========================
+     OFFLINE ESTIMATE BADGE
+     ========================= */
+
+  const isOffline = Boolean(result.offline);
+
+  const handleDownload = async () => {
+    setDownloading(true);
+    setDownloadError("");
+
+    try {
+      // Dynamically imported so the PDF library (and its html2canvas
+      // dependency) only load when the user actually requests a report,
+      // keeping the initial page load lean.
+      const { downloadRiskReport } = await import("../services/reportGenerator");
+      downloadRiskReport({ result, isOffline });
+    } catch (error) {
+      setDownloadError(
+        error.message || "Unable to generate the report. Please try again."
+      );
+    } finally {
+      setDownloading(false);
+    }
+  };
 
 
   /* =========================
@@ -78,30 +109,16 @@ function PredictionResult({ result }) {
 
   /* =========================
      MODEL FEATURE IMPORTANCE
+     (per-prediction, from SHAP — not hardcoded)
      ========================= */
 
-  const featureImportance = [
-    {
-      name: "Insulin",
-      value: 45.40
-    },
-    {
-      name: "Glucose",
-      value: 18.75
-    },
-    {
-      name: "Age",
-      value: 13.73
-    },
-    {
-      name: "BMI",
-      value: 12.27
-    },
-    {
-      name: "Blood Pressure",
-      value: 9.85
-    }
-  ];
+  const featureContributions = result.feature_contributions ?? [];
+
+  const rangeFlagLabel = {
+    high: "Above typical range",
+    elevated: "Slightly elevated",
+    normal: "Within typical range",
+  };
 
 
   return (
@@ -113,7 +130,30 @@ function PredictionResult({ result }) {
 
       <div className="result-header">
         ✓ Prediction complete
+
+        <button
+          type="button"
+          className="download-report-btn"
+          onClick={handleDownload}
+          disabled={downloading}
+        >
+          {downloading ? "Preparing..." : "⬇ Download Report"}
+        </button>
       </div>
+
+      {downloadError && (
+        <div className="download-error">
+          {downloadError}
+        </div>
+      )}
+
+      {isOffline && (
+        <div className="offline-badge">
+          ⚡ Offline estimate — backend unreachable. This uses a simplified
+          local calculation, not the trained ML model. Reconnect for a
+          full assessment.
+        </div>
+      )}
 
 
       {/* =========================
@@ -191,24 +231,42 @@ function PredictionResult({ result }) {
           Factors considered by GlucoSense
         </h3>
 
+        <p className="insights-description">
+          {isOffline
+            ? "Based on a simplified local rule-based estimate — each factor's share of influence in this offline calculation."
+            : "Based on SHAP analysis of your specific inputs — each factor's share of influence on this individual prediction."}
+        </p>
+
 
         <div className="prediction-feature-list">
 
-          {featureImportance.map((feature) => (
+          {featureContributions.map((feature) => (
 
             <div
               className="prediction-feature"
-              key={feature.name}
+              key={feature.feature}
             >
 
               <div className="prediction-feature-header">
 
                 <span>
-                  {feature.name}
+                  {feature.label}
+                  {feature.value !== undefined && (
+                    <span className="prediction-feature-value">
+                      {" "}({feature.value}{feature.unit})
+                    </span>
+                  )}
                 </span>
 
-                <strong>
-                  {feature.value.toFixed(2)}%
+                <strong
+                  className={
+                    feature.direction === "increases_risk"
+                      ? "impact-up"
+                      : "impact-down"
+                  }
+                >
+                  {feature.direction === "increases_risk" ? "▲" : "▼"}{" "}
+                  {feature.influence_share.toFixed(1)}%
                 </strong>
 
               </div>
@@ -216,13 +274,23 @@ function PredictionResult({ result }) {
               <div className="prediction-feature-bar">
 
                 <div
-                  className="prediction-feature-fill"
+                  className={
+                    feature.direction === "increases_risk"
+                      ? "prediction-feature-fill fill-up"
+                      : "prediction-feature-fill fill-down"
+                  }
                   style={{
-                    width: `${feature.value}%`
+                    width: `${feature.influence_share}%`
                   }}
                 />
 
               </div>
+
+              {feature.range_flag && (
+                <div className={`range-flag range-flag-${feature.range_flag}`}>
+                  {rangeFlagLabel[feature.range_flag]}
+                </div>
+              )}
 
             </div>
 

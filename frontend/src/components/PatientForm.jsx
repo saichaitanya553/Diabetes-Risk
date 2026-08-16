@@ -6,7 +6,15 @@ const initialForm = {
   bmi: "",
   age: "",
   insulin: "",
+  pregnancies: "0",
+  skin_thickness: "20",
+  diabetes_pedigree_function: "0.3",
 };
+
+// Fields required for a valid prediction. The remaining fields
+// (pregnancies, skin_thickness, diabetes_pedigree_function) are
+// optional refinements with sensible population-average defaults.
+const REQUIRED_FIELDS = ["glucose", "blood_pressure", "bmi", "age", "insulin"];
 
 const limits = {
   glucose: {
@@ -33,6 +41,21 @@ const limits = {
     min: 0,
     max: 1000,
     label: "Insulin",
+  },
+  pregnancies: {
+    min: 0,
+    max: 20,
+    label: "Pregnancies",
+  },
+  skin_thickness: {
+    min: 0,
+    max: 100,
+    label: "Skin Thickness",
+  },
+  diabetes_pedigree_function: {
+    min: 0,
+    max: 3,
+    label: "Family History Score",
   },
 };
 
@@ -63,7 +86,7 @@ function PatientForm({ onPredict, loading, onReset }) {
        ========================= */
 
     const missingField = Object.entries(form).find(
-      ([, value]) => value.trim() === ""
+      ([key, value]) => REQUIRED_FIELDS.includes(key) && value.trim() === ""
     );
 
     if (missingField) {
@@ -131,6 +154,12 @@ function PatientForm({ onPredict, loading, onReset }) {
 
         insulin: Number(form.insulin),
 
+        pregnancies: Number(form.pregnancies),
+
+        skin_thickness: Number(form.skin_thickness),
+
+        diabetes_pedigree_function: Number(form.diabetes_pedigree_function),
+
       });
 
     } catch (error) {
@@ -180,6 +209,24 @@ function PatientForm({ onPredict, loading, onReset }) {
           Math.random() * 251
         ) + 50,
 
+      pregnancies:
+        Math.floor(
+          Math.random() * 6
+        ),
+
+      skin_thickness:
+        Math.floor(
+          Math.random() * 31
+        ) + 10,
+
+      diabetes_pedigree_function:
+        Number(
+          (
+            Math.random() * 1.2 +
+            0.1
+          ).toFixed(2)
+        ),
+
     };
 
     setForm({
@@ -198,6 +245,15 @@ function PatientForm({ onPredict, loading, onReset }) {
 
       insulin:
         String(demoData.insulin),
+
+      pregnancies:
+        String(demoData.pregnancies),
+
+      skin_thickness:
+        String(demoData.skin_thickness),
+
+      diabetes_pedigree_function:
+        String(demoData.diabetes_pedigree_function),
 
     });
 
@@ -356,6 +412,77 @@ function PatientForm({ onPredict, loading, onReset }) {
           value={form.insulin}
           onChange={handleChange}
           placeholder="e.g. 120"
+        />
+
+      </div>
+
+
+      {/* OPTIONAL REFINEMENTS */}
+
+      <div className="field-full form-section-divider">
+        <span>Optional — improves accuracy</span>
+      </div>
+
+      <div className="field-group">
+
+        <label htmlFor="pregnancies">
+          Pregnancies
+        </label>
+
+        <input
+          id="pregnancies"
+          name="pregnancies"
+          type="number"
+          min="0"
+          max="20"
+          step="1"
+          value={form.pregnancies}
+          onChange={handleChange}
+          placeholder="0"
+        />
+
+      </div>
+
+      <div className="field-group">
+
+        <label htmlFor="skin_thickness">
+          Skin Thickness
+        </label>
+
+        <span className="field-unit">
+          mm
+        </span>
+
+        <input
+          id="skin_thickness"
+          name="skin_thickness"
+          type="number"
+          min="0"
+          max="100"
+          step="1"
+          value={form.skin_thickness}
+          onChange={handleChange}
+          placeholder="e.g. 20"
+        />
+
+      </div>
+
+      <div className="field-group field-full">
+
+        <label htmlFor="diabetes_pedigree_function">
+          Family History Score
+        </label>
+
+        <input
+          id="diabetes_pedigree_function"
+          name="diabetes_pedigree_function"
+          type="number"
+          min="0"
+          max="3"
+          step="0.01"
+          value={form.diabetes_pedigree_function}
+          onChange={handleChange}
+          placeholder="e.g. 0.3"
         />
 
       </div>

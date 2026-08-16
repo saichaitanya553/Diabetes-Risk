@@ -1,5 +1,25 @@
+import { useEffect, useState } from "react";
+import { getModelInfo } from "../services/api";
 
 function About() {
+  const [modelInfo, setModelInfo] = useState(null);
+  const [loadError, setLoadError] = useState(false);
+
+  useEffect(() => {
+    getModelInfo()
+      .then(setModelInfo)
+      .catch(() => setLoadError(true));
+  }, []);
+
+  // Fallback values shown only if the API is unreachable, clearly
+  // labeled as such rather than silently passing off as live data.
+  const metrics = modelInfo?.test_metrics ?? {
+    accuracy: 0.87,
+    precision: 0.81,
+    recall: 0.81,
+    f1_score: 0.81,
+  };
+
   return (
     <div className="about-page">
 
@@ -96,7 +116,9 @@ function About() {
 
         <p className="performance-description">
           The final XGBoost model was evaluated using
-          multiple classification metrics on the test dataset.
+          multiple classification metrics on a held-out test set,
+          trained on all 8 clinical features from the dataset.
+          {loadError && " (Showing last-known values — live metrics unavailable.)"}
         </p>
 
 
@@ -104,7 +126,7 @@ function About() {
 
           <div className="performance-card">
             <span>Accuracy</span>
-            <strong>85.71%</strong>
+            <strong>{(metrics.accuracy * 100).toFixed(2)}%</strong>
             <p>
               Overall correct predictions
             </p>
@@ -113,7 +135,7 @@ function About() {
 
           <div className="performance-card">
             <span>Precision</span>
-            <strong>80.77%</strong>
+            <strong>{(metrics.precision * 100).toFixed(2)}%</strong>
             <p>
               Correct positive predictions
             </p>
@@ -122,7 +144,7 @@ function About() {
 
           <div className="performance-card">
             <span>Recall</span>
-            <strong>77.78%</strong>
+            <strong>{(metrics.recall * 100).toFixed(2)}%</strong>
             <p>
               Actual positive cases identified
             </p>
@@ -131,13 +153,31 @@ function About() {
 
           <div className="performance-card">
             <span>F1 Score</span>
-            <strong>79.25%</strong>
+            <strong>{(metrics.f1_score * 100).toFixed(2)}%</strong>
             <p>
               Balance between precision and recall
             </p>
           </div>
 
+          {modelInfo?.test_metrics?.roc_auc && (
+            <div className="performance-card">
+              <span>ROC-AUC</span>
+              <strong>{(modelInfo.test_metrics.roc_auc * 100).toFixed(2)}%</strong>
+              <p>
+                Ability to separate risk classes
+              </p>
+            </div>
+          )}
+
         </div>
+
+        {modelInfo?.cv_metrics && (
+          <p className="performance-cv-note">
+            5-fold cross-validation accuracy: {(modelInfo.cv_metrics.accuracy * 100).toFixed(2)}%
+            {" "}— consistent with the holdout test result, indicating the
+            model generalizes rather than overfitting to one split.
+          </p>
+        )}
 
       </section>
 

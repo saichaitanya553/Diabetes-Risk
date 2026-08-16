@@ -1,6 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const HISTORY_KEY = "glucosense_prediction_history";
+
+function readHistory() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    return Array.isArray(stored) ? stored : [];
+  } catch (error) {
+    console.error("Unable to read prediction history:", error);
+    return [];
+  }
+}
 
 function formatDateTime(value) {
   const date = new Date(value);
@@ -22,21 +32,7 @@ function getRisk(entry) {
 }
 
 function History() {
-  const [history, setHistory] = useState([]);
-
-  const loadHistory = () => {
-    try {
-      const stored = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
-      setHistory(Array.isArray(stored) ? stored : []);
-    } catch (error) {
-      console.error("Unable to read prediction history:", error);
-      setHistory([]);
-    }
-  };
-
-  useEffect(() => {
-    loadHistory();
-  }, []);
+  const [history, setHistory] = useState(readHistory);
 
   const clearHistory = () => {
     if (!history.length) return;
@@ -104,6 +100,15 @@ function History() {
                   <div><span>BMI</span><strong>{inputs.bmi ?? "—"}</strong></div>
                   <div><span>Age</span><strong>{inputs.age ?? "—"}</strong></div>
                   <div><span>Insulin</span><strong>{inputs.insulin ?? "—"}</strong></div>
+                  {inputs.pregnancies !== undefined && (
+                    <div><span>Pregnancies</span><strong>{inputs.pregnancies}</strong></div>
+                  )}
+                  {inputs.skin_thickness !== undefined && (
+                    <div><span>Skin Thickness</span><strong>{inputs.skin_thickness}</strong></div>
+                  )}
+                  {inputs.diabetes_pedigree_function !== undefined && (
+                    <div><span>Family History</span><strong>{inputs.diabetes_pedigree_function}</strong></div>
+                  )}
                 </div>
 
                 <button className="history-delete" onClick={() => deleteEntry(entry.id)}>
