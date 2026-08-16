@@ -1,0 +1,121 @@
+import { useEffect, useState } from "react";
+
+const HISTORY_KEY = "glucosense_prediction_history";
+
+function formatDateTime(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Unknown time";
+
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
+function getRisk(entry) {
+  const result = entry.result || {};
+  const percentage = Number(
+    result.risk_percentage ?? result.risk_score ?? result.riskPercent ?? 0
+  );
+  const level = result.risk_level ?? result.riskLevel ?? "Unknown";
+  return { percentage, level };
+}
+
+function History() {
+  const [history, setHistory] = useState([]);
+
+  const loadHistory = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+      setHistory(Array.isArray(stored) ? stored : []);
+    } catch (error) {
+      console.error("Unable to read prediction history:", error);
+      setHistory([]);
+    }
+  };
+
+  useEffect(() => {
+    loadHistory();
+  }, []);
+
+  const clearHistory = () => {
+    if (!history.length) return;
+    if (!window.confirm("Clear all prediction history from this browser?")) return;
+    localStorage.removeItem(HISTORY_KEY);
+    setHistory([]);
+  };
+
+  const deleteEntry = (id) => {
+    const updated = history.filter((entry) => entry.id !== id);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
+    setHistory(updated);
+  };
+
+  return (
+    <main className="history-page">
+      <section className="page-heading history-heading">
+        <div>
+          <div className="section-label">PREDICTION HISTORY</div>
+          <h1>Recent diabetes risk predictions</h1>
+          <p>
+            Your completed predictions are stored only in this browser using local storage.
+          </p>
+        </div>
+
+        {history.length > 0 && (
+          <button className="btn btn-secondary history-clear" onClick={clearHistory}>
+            Clear history
+          </button>
+        )}
+      </section>
+
+      {history.length === 0 ? (
+        <section className="history-empty">
+          <div className="history-empty-icon">↺</div>
+          <h2>No predictions yet</h2>
+          <p>
+            Complete a prediction from the Predict Risk page and it will appear here automatically.
+          </p>
+          <a className="btn btn-primary" href="/predict">Make a prediction</a>
+        </section>
+      ) : (
+        <section className="history-list" aria-label="Prediction history">
+          {history.map((entry) => {
+            const { percentage, level } = getRisk(entry);
+            const inputs = entry.inputs || {};
+            const normalizedLevel = level.toLowerCase().replace(/\s+/g, "-");
+
+            return (
+              <article className="history-card" key={entry.id}>
+                <div className="history-card-top">
+                  <div>
+                    <div className="history-completed">✓ Prediction completed</div>
+                    <time dateTime={entry.completedAt}>{formatDateTime(entry.completedAt)}</time>
+                  </div>
+                  <div className={`history-risk ${normalizedLevel}`}>
+                    <strong>{Number.isFinite(percentage) ? percentage.toFixed(2) : "0.00"}%</strong>
+                    <span>{level}</span>
+                  </div>
+                </div>
+
+                <div className="history-inputs">
+                  <div><span>Glucose</span><strong>{inputs.glucose ?? "—"} mg/dL</strong></div>
+                  <div><span>Blood Pressure</span><strong>{inputs.blood_pressure ?? "—"}</strong></div>
+                  <div><span>BMI</span><strong>{inputs.bmi ?? "—"}</strong></div>
+                  <div><span>Age</span><strong>{inputs.age ?? "—"}</strong></div>
+                  <div><span>Insulin</span><strong>{inputs.insulin ?? "—"}</strong></div>
+                </div>
+
+                <button className="history-delete" onClick={() => deleteEntry(entry.id)}>
+                  Remove
+                </button>
+              </article>
+            );
+          })}
+        </section>
+      )}
+    </main>
+  );
+}
+
+export default History;
