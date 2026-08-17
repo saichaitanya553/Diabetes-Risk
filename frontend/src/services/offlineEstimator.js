@@ -51,23 +51,6 @@ function scoreInsulin(value) {
   return 10;
 }
 
-function scorePregnancies(value) {
-  if (value <= 0) return 0;
-  if (value <= 3) return 3;
-  return 6;
-}
-
-function scoreSkinThickness(value) {
-  if (value <= 30) return 0;
-  return 4;
-}
-
-function scorePedigree(value) {
-  if (value < 0.3) return 0;
-  if (value <= 0.8) return 5;
-  return 10;
-}
-
 export function estimateRiskOffline(patientData) {
   const factors = [
     {
@@ -105,32 +88,11 @@ export function estimateRiskOffline(patientData) {
       unit: "\u03bcU/mL",
       score: scoreInsulin(patientData.insulin),
     },
-    {
-      feature: "Pregnancies",
-      label: "Pregnancies",
-      value: patientData.pregnancies ?? 0,
-      unit: "",
-      score: scorePregnancies(patientData.pregnancies ?? 0),
-    },
-    {
-      feature: "SkinThickness",
-      label: "Skin Thickness",
-      value: patientData.skin_thickness ?? 20,
-      unit: "mm",
-      score: scoreSkinThickness(patientData.skin_thickness ?? 20),
-    },
-    {
-      feature: "DiabetesPedigreeFunction",
-      label: "Family History Score",
-      value: patientData.diabetes_pedigree_function ?? 0.3,
-      unit: "",
-      score: scorePedigree(patientData.diabetes_pedigree_function ?? 0.3),
-    },
   ];
 
   const rawTotal = factors.reduce((sum, f) => sum + f.score, 0);
   // Max attainable score across all factors, used to scale into 0-100
-  const maxPossible = 40 + 20 + 15 + 10 + 10 + 6 + 4 + 10; // 115
+  const maxPossible = 40 + 20 + 15 + 10 + 10; // 95
   const riskPercentage = Math.min(100, Math.round((rawTotal / maxPossible) * 100 * 1.15 * 100) / 100);
 
   let riskLevel = "Low Risk";

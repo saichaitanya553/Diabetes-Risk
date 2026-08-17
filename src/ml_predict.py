@@ -61,6 +61,16 @@ FEATURE_META = {
 # RECOMMENDATIONS
 # ---------------------------------------------------------
 
+# Only these features are actually collected from the user via the
+# frontend form. Pregnancies, SkinThickness, and DiabetesPedigreeFunction
+# are still passed to the model internally (using clinically reasonable
+# defaults, since the trained model expects all 8 features), but are
+# excluded from the reported contributions/top factors below — they were
+# never real measurements the user provided, so they shouldn't be shown
+# as if they were.
+REPORTED_FEATURES = {"Glucose", "BloodPressure", "BMI", "Age", "Insulin"}
+
+
 def get_recommendations(risk_level: str) -> list[str]:
     if risk_level == "High Risk":
         return [
@@ -192,12 +202,20 @@ def predict_diabetes_risk(
     # Sort by influence share, strongest first
     contributions.sort(key=lambda c: c["influence_share"], reverse=True)
 
+    # Only report factors the user actually provided values for.
+    reported_contributions = [
+        c for c in contributions if c["feature"] in REPORTED_FEATURES
+    ]
+
     return {
         "risk_percentage": round(float(risk_percentage), 2),
         "risk_level": risk_level,
         "recommendations": recommendations,
-        "feature_contributions": contributions,
-        "top_factors": [c["label"] for c in contributions[:3] if c["direction"] == "increases_risk"],
+        "feature_contributions": reported_contributions,
+        "top_factors": [
+            c["label"] for c in reported_contributions[:3]
+            if c["direction"] == "increases_risk"
+        ],
     }
 
 
@@ -212,9 +230,6 @@ if __name__ == "__main__":
         bmi=32,
         age=45,
         insulin=120,
-        pregnancies=2,
-        skin_thickness=25,
-        diabetes_pedigree_function=0.5,
     )
 
     print("Diabetes Risk Prediction")
