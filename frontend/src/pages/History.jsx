@@ -47,6 +47,18 @@ function History() {
     setHistory(updated);
   };
 
+  const handleDownload = async (entry) => {
+    try {
+      const { downloadRiskReport } = await import("../services/reportGenerator");
+      downloadRiskReport({
+        result: entry.result,
+        isOffline: Boolean(entry.result?.offline),
+      });
+    } catch (error) {
+      console.error("Unable to generate PDF report:", error);
+    }
+  };
+
   return (
     <main className="history-page">
       <section className="page-heading history-heading">
@@ -110,6 +122,16 @@ function History() {
                     <div><span>Family History</span><strong>{inputs.diabetes_pedigree_function}</strong></div>
                   )}
                 </div>
+
+                <button
+                  type="button"
+                  className="history-download"
+                  onClick={() => handleDownload(entry)}
+                  aria-label="Download PDF report"
+                  title="Download PDF report"
+                >
+                  ⬇
+                </button>
 
                 <button className="history-delete" onClick={() => deleteEntry(entry.id)}>
                   Remove

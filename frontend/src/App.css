@@ -2910,7 +2910,7 @@ a {
   grid-template-columns: repeat(5, 1fr);
   gap: 12px;
   padding-top: 20px;
-  padding-right: 80px;
+  padding-right: 100px;
 }
 
 .history-inputs div {
@@ -2932,6 +2932,34 @@ a {
 
 .history-inputs strong {
   font-size: 14px;
+}
+
+.history-download {
+  position: absolute;
+  right: 90px;
+  bottom: 18px;
+
+  width: 34px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+
+  color: var(--primary);
+  font-size: 15px;
+  line-height: 1;
+
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.history-download:hover {
+  background: var(--soft-green);
+  border-color: var(--primary);
 }
 
 .history-delete {
@@ -2994,9 +3022,15 @@ a {
     padding-right: 0;
   }
 
+  .history-download {
+    position: static;
+    margin-top: 14px;
+  }
+
   .history-delete {
     position: static;
     margin-top: 14px;
+    margin-left: 10px;
     padding-left: 0;
   }
 }

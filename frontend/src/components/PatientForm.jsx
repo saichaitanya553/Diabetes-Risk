@@ -6,15 +6,25 @@ const initialForm = {
   bmi: "",
   age: "",
   insulin: "",
-  pregnancies: "0",
-  skin_thickness: "20",
-  diabetes_pedigree_function: "0.3",
+  pregnancies: "",
+  skin_thickness: "",
+  diabetes_pedigree_function: "",
 };
 
-// Fields required for a valid prediction. The remaining fields
-// (pregnancies, skin_thickness, diabetes_pedigree_function) are
-// optional refinements with sensible population-average defaults.
-const REQUIRED_FIELDS = ["glucose", "blood_pressure", "bmi", "age", "insulin"];
+// All fields require an explicit value from the user — no field is
+// silently filled with a population-average default. If you leave one
+// blank, you'll be asked to enter it rather than a value like 0 / 20 /
+// 0.3 being assumed on your behalf.
+const REQUIRED_FIELDS = [
+  "glucose",
+  "blood_pressure",
+  "bmi",
+  "age",
+  "insulin",
+  "pregnancies",
+  "skin_thickness",
+  "diabetes_pedigree_function",
+];
 
 const limits = {
   glucose: {
@@ -137,29 +147,22 @@ function PatientForm({ onPredict, loading, onReset }) {
 
     /* =========================
        SEND DATA TO BACKEND
+       Every field above is required and validated, so every value
+       sent here was explicitly entered by the user — nothing is
+       silently substituted.
        ========================= */
 
     try {
 
       await onPredict({
-
         glucose: Number(form.glucose),
-
-        blood_pressure:
-          Number(form.blood_pressure),
-
+        blood_pressure: Number(form.blood_pressure),
         bmi: Number(form.bmi),
-
         age: Number(form.age),
-
         insulin: Number(form.insulin),
-
         pregnancies: Number(form.pregnancies),
-
         skin_thickness: Number(form.skin_thickness),
-
         diabetes_pedigree_function: Number(form.diabetes_pedigree_function),
-
       });
 
     } catch (error) {
@@ -420,7 +423,7 @@ function PatientForm({ onPredict, loading, onReset }) {
       {/* OPTIONAL REFINEMENTS */}
 
       <div className="field-full form-section-divider">
-        <span>Optional — improves accuracy</span>
+        <span>Additional factors</span>
       </div>
 
       <div className="field-group">
@@ -438,7 +441,7 @@ function PatientForm({ onPredict, loading, onReset }) {
           step="1"
           value={form.pregnancies}
           onChange={handleChange}
-          placeholder="0"
+          placeholder="e.g. 2"
         />
 
       </div>
