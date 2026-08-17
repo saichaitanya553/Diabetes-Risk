@@ -2936,11 +2936,11 @@ a {
 
 .history-download {
   position: absolute;
-  right: 90px;
-  bottom: 18px;
+  right: 88px;
+  bottom: 17px;
 
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
 
   display: grid;
   place-items: center;
@@ -2950,16 +2950,56 @@ a {
   background: var(--surface);
 
   color: var(--primary);
-  font-size: 15px;
-  line-height: 1;
 
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.18s ease, border-color 0.18s ease,
+    color 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
 }
 
-.history-download:hover {
-  background: var(--soft-green);
+.history-download svg {
+  transition: transform 0.18s ease;
+}
+
+.history-download:hover:not(:disabled) {
+  background: var(--primary);
   border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 6px 16px -6px rgba(20, 108, 90, 0.55);
+  transform: translateY(-2px);
+}
+
+.history-download:hover:not(:disabled) svg {
+  transform: translateY(1px);
+}
+
+.history-download:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.history-download:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.history-download:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.history-download-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: history-download-spin 0.7s linear infinite;
+}
+
+@keyframes history-download-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .history-delete {

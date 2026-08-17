@@ -47,7 +47,10 @@ function History() {
     setHistory(updated);
   };
 
+  const [downloadingId, setDownloadingId] = useState(null);
+
   const handleDownload = async (entry) => {
+    setDownloadingId(entry.id);
     try {
       const { downloadRiskReport } = await import("../services/reportGenerator");
       downloadRiskReport({
@@ -56,6 +59,8 @@ function History() {
       });
     } catch (error) {
       console.error("Unable to generate PDF report:", error);
+    } finally {
+      setDownloadingId(null);
     }
   };
 
@@ -127,10 +132,29 @@ function History() {
                   type="button"
                   className="history-download"
                   onClick={() => handleDownload(entry)}
+                  disabled={downloadingId === entry.id}
                   aria-label="Download PDF report"
                   title="Download PDF report"
                 >
-                  ⬇
+                  {downloadingId === entry.id ? (
+                    <span className="history-download-spinner" aria-hidden="true" />
+                  ) : (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M12 3v12" />
+                      <path d="M7 10l5 5 5-5" />
+                      <path d="M5 21h14" />
+                    </svg>
+                  )}
                 </button>
 
                 <button className="history-delete" onClick={() => deleteEntry(entry.id)}>
