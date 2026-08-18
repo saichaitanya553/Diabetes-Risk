@@ -1,7 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
-import { estimateRiskOffline } from "./offlineEstimator";
-
 export async function checkHealth() {
   const response = await fetch(`${API_URL}/health`);
 
@@ -24,19 +22,17 @@ export async function predictDiabetesRisk(patientData) {
       body: JSON.stringify(patientData),
     });
   } catch {
-    // The backend is unreachable (server down, no network, CORS block, etc).
-    // Fall back to a transparent, clearly-labeled offline estimate rather
-    // than leaving the user with nothing — important for live demos.
-    return estimateRiskOffline(patientData);
+    // The backend is unreachable (server down, no network, CORS block,
+    // etc). Surface this clearly rather than silently substituting a
+    // different, non-ML estimate the user didn't ask for.
+    throw new Error(
+      "Could not connect to the prediction server. Please check your connection and try again."
+    );
   }
 
   const data = await response.json();
 
   if (!response.ok) {
-    // The backend responded but rejected the request (e.g. validation
-    // error) — this is a real error, not a connectivity problem, so it
-    // should surface to the user rather than being silently masked by
-    // the offline fallback.
     throw new Error(data.detail || "Prediction failed.");
   }
 

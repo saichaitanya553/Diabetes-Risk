@@ -53,10 +53,7 @@ function History() {
     setDownloadingId(entry.id);
     try {
       const { downloadRiskReport } = await import("../services/reportGenerator");
-      downloadRiskReport({
-        result: entry.result,
-        isOffline: Boolean(entry.result?.offline),
-      });
+      downloadRiskReport({ result: entry.result });
     } catch (error) {
       console.error("Unable to generate PDF report:", error);
     } finally {

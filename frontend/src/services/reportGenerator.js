@@ -42,7 +42,7 @@ function pdfSafe(text) {
  *  - top contributing factors and short-form recommendations
  *  - personalized lifestyle Do's & Don'ts for the predicted risk level
  */
-export function generateRiskReport({ result, isOffline }) {
+export function generateRiskReport({ result }) {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -69,25 +69,6 @@ export function generateRiskReport({ result, isOffline }) {
   doc.text(`Generated ${formatDate(new Date())}`, margin, 50);
 
   let cursorY = 95;
-
-  if (isOffline) {
-    doc.setFillColor(253, 241, 220);
-    doc.rect(margin, cursorY, pageWidth - margin * 2, 28, "F");
-    doc.setTextColor(138, 90, 8);
-    doc.setFontSize(9);
-    doc.setFont("helvetica", "bold");
-    doc.text(
-      "Offline estimate — generated using a simplified local calculation,",
-      margin + 8,
-      cursorY + 12
-    );
-    doc.text(
-      "not the trained ML model. Reconnect and re-run for a full assessment.",
-      margin + 8,
-      cursorY + 22
-    );
-    cursorY += 40;
-  }
 
   // ---- Risk summary ----
   const riskColor = getRiskColor(result.risk_level);
@@ -171,7 +152,7 @@ export function generateRiskReport({ result, isOffline }) {
     afterTableY += 6;
   }
 
-  // ---- Recommendations (short-form, from the model/offline estimator) ----
+  // ---- Recommendations (short-form, from the model) ----
   if (result.recommendations?.length) {
     afterTableY = ensureSpace(60, afterTableY);
     doc.setFont("helvetica", "bold");

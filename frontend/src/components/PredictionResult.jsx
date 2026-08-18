@@ -27,12 +27,6 @@ function PredictionResult({ result }) {
   }
 
 
-  /* =========================
-     OFFLINE ESTIMATE BADGE
-     ========================= */
-
-  const isOffline = Boolean(result.offline);
-
   const handleDownload = async () => {
     setDownloading(true);
     setDownloadError("");
@@ -42,7 +36,7 @@ function PredictionResult({ result }) {
       // dependency) only load when the user actually requests a report,
       // keeping the initial page load lean.
       const { downloadRiskReport } = await import("../services/reportGenerator");
-      downloadRiskReport({ result, isOffline });
+      downloadRiskReport({ result });
     } catch (error) {
       setDownloadError(
         error.message || "Unable to generate the report. Please try again."
@@ -147,14 +141,6 @@ function PredictionResult({ result }) {
         </div>
       )}
 
-      {isOffline && (
-        <div className="offline-badge">
-          ⚡ Offline estimate — backend unreachable. This uses a simplified
-          local calculation, not the trained ML model. Reconnect for a
-          full assessment.
-        </div>
-      )}
-
 
       {/* =========================
           SCORE
@@ -232,9 +218,8 @@ function PredictionResult({ result }) {
         </h3>
 
         <p className="insights-description">
-          {isOffline
-            ? "Based on a simplified local rule-based estimate — each factor's share of influence in this offline calculation."
-            : "Based on SHAP analysis of your specific inputs — each factor's share of influence on this individual prediction."}
+          Based on SHAP analysis of your specific inputs — each factor's
+          share of influence on this individual prediction.
         </p>
 
 

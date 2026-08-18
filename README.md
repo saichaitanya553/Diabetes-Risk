@@ -6,9 +6,8 @@ measurements into an interpretable risk assessment. Built with a
 trained on the Pima Indians Diabetes dataset.
 
 Unlike a plain "risk score" output, GlucoSense explains *why* it reached
-that score for each individual user (via SHAP), flags which inputs are
-outside typical clinical ranges, and stays usable even if the backend
-is temporarily unreachable via a transparent offline fallback estimate.
+that score for each individual user (via SHAP) and flags which inputs are
+outside typical clinical ranges.
 
 ---
 
@@ -36,8 +35,6 @@ throughout the app.
   average and vs. the average among diabetic cases in the dataset,
   plus the risk score, top contributing factors, and recommendations
 - **Local prediction history** — stored in the browser, no account needed
-- **Offline fallback** — if the FastAPI backend is unreachable, a
-  clearly-labeled rule-based estimator keeps the app usable
 - **Input validation** and a one-click demo data generator for quick testing
 
 ---
@@ -74,8 +71,7 @@ Diabetes-risk-prediction/
 │   │   ├── pages/             # Home, Predict, History, About
 │   │   ├── components/        # PatientForm, PredictionResult, etc.
 │   │   └── services/
-│   │       ├── api.js               # Backend calls
-│   │       └── offlineEstimator.js  # Rule-based fallback
+│   │       └── api.js               # Backend calls
 │   └── ...
 └── requirements.txt
 ```
@@ -212,9 +208,8 @@ numerical precision than the underlying SHAP math supports).
 
 - Trained on the Pima Indians Diabetes dataset (768 records, female
   patients aged 21+), so it does not generalize to all populations.
-- The offline fallback estimator is a simplified rule-based heuristic
-  using standard clinical thresholds — it is **not** the trained ML
-  model and is only used when the backend is unreachable.
+- Requires a live connection to the FastAPI backend; there is no offline
+  or fallback estimate if the server is unreachable.
 - **This tool is for educational and screening purposes only.** It is
   not a medical diagnosis and should not replace professional medical
   advice, testing, or treatment.

@@ -2779,21 +2779,6 @@ a {
 }
 
 
-/* OFFLINE ESTIMATE BADGE */
-
-.offline-badge {
-  margin-top: 10px;
-  padding: 10px 14px;
-  background: #fdf1dc;
-  color: #8a5a08;
-  border: 1px solid #f0d9ab;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.5;
-}
-
-
 /* CROSS-VALIDATION NOTE ON ABOUT PAGE */
 
 .performance-cv-note {
