@@ -1,0 +1,26 @@
+# --- Python ---
+venv/
+.venv/
+env/
+sai/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# --- Node / frontend ---
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# --- Environment files ---
+.env
+.env.local
+.env.*.local
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

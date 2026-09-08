@@ -1,0 +1,82 @@
+{
+  "test_metrics": {
+    "accuracy": 0.8701,
+    "precision": 0.8148,
+    "recall": 0.8148,
+    "f1_score": 0.8148,
+    "roc_auc": 0.953
+  },
+  "cv_metrics": {
+    "accuracy": 0.8803,
+    "precision": 0.8439,
+    "recall": 0.8099,
+    "f1_score": 0.8259,
+    "roc_auc": 0.9492
+  },
+  "confusion_matrix": [
+    [
+      90,
+      10
+    ],
+    [
+      10,
+      44
+    ]
+  ],
+  "confusion_matrix_labels": [
+    "No Diabetes",
+    "Diabetes"
+  ],
+  "features": [
+    "Pregnancies",
+    "Glucose",
+    "BloodPressure",
+    "SkinThickness",
+    "Insulin",
+    "BMI",
+    "DiabetesPedigreeFunction",
+    "Age"
+  ],
+  "train_size": 614,
+  "test_size": 154,
+  "model_type": "XGBoost (XGBClassifier)",
+  "hyperparameters": {
+    "n_estimators": 200,
+    "max_depth": 4,
+    "learning_rate": 0.05,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8
+  },
+  "feature_averages": {
+    "overall": {
+      "Pregnancies": 3.85,
+      "Glucose": 121.68,
+      "BloodPressure": 72.39,
+      "SkinThickness": 29.09,
+      "Insulin": 141.75,
+      "BMI": 32.43,
+      "DiabetesPedigreeFunction": 0.47,
+      "Age": 33.24
+    },
+    "non_diabetic": {
+      "Pregnancies": 3.3,
+      "Glucose": 110.62,
+      "BloodPressure": 70.84,
+      "SkinThickness": 27.17,
+      "Insulin": 117.17,
+      "BMI": 30.85,
+      "DiabetesPedigreeFunction": 0.43,
+      "Age": 31.19
+    },
+    "diabetic": {
+      "Pregnancies": 4.87,
+      "Glucose": 142.3,
+      "BloodPressure": 75.27,
+      "SkinThickness": 32.67,
+      "Insulin": 187.62,
+      "BMI": 35.4,
+      "DiabetesPedigreeFunction": 0.55,
+      "Age": 37.07
+    }
+  }
+}
