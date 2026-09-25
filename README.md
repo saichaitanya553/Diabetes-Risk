@@ -1,6 +1,8 @@
 # GlucoSense — Diabetes Risk Prediction
 
-An AI-powered diabetes risk screening tool that turns routine health
+[![CI](https://github.com/saichaitanya553/Diabetes-Risk/actions/workflows/ci.yml/badge.svg)](https://github.com/saichaitanya553/Diabetes-Risk/actions/workflows/ci.yml)
+
+An end-to-end AI-powered diabetes risk screening tool that turns routine health
 measurements into an interpretable risk assessment. Built with a
 **React** frontend, a **FastAPI** backend, and an **XGBoost** classifier
 trained on the Pima Indians Diabetes dataset.
